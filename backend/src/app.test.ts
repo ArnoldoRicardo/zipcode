@@ -1,7 +1,7 @@
 import { typeDefs, resolvers, server } from './app'
 import { gql, ApolloServer } from 'apollo-server'
 
-const GET_US = gql`
+const GET_ZIPCODE = gql`
   query getZipcode($countryCode: String!, $code: String!) {
     getZipcode(countryCode: $countryCode, code: $code) {
       country
@@ -57,7 +57,7 @@ describe('test graphql with mocks', () => {
 
   it('test existing country', async () => {
     const result = await testServer.executeOperation({
-      query: GET_US,
+      query: GET_ZIPCODE,
       variables: { code: '90210', countryCode: 'us' }
     })
 
@@ -68,7 +68,7 @@ describe('test graphql with mocks', () => {
 
 it('test dont existing country', async () => {
     const result = await testServer.executeOperation({
-      query: GET_US,
+      query: GET_ZIPCODE,
       variables: { code: '90234', countryCode: 'zz' }
     })
 
@@ -85,7 +85,7 @@ it('test dont existing country', async () => {
 describe('test graphql server end to end', () => {
   it('test existing country', async () => {
     const result = await server.executeOperation({
-      query: GET_US,
+      query: GET_ZIPCODE,
       variables: { code: '90210', countryCode: 'us' }
     })
 
@@ -96,7 +96,7 @@ describe('test graphql server end to end', () => {
 
 it('test dont existing country', async () => {
     const result = await server.executeOperation({
-      query: GET_US,
+      query: GET_ZIPCODE,
       variables: { code: '90234', countryCode: 'zz' }
     })
 

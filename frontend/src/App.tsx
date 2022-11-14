@@ -1,32 +1,35 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useQuery, gql } from '@apollo/client'
+import { FormikHelpers } from 'formik'
+import { SearchZipcode, Values as ValuesForm } from './SearchZipcode'
+import { ShowZipcode } from './ShowZipcode'
+import { useHistorySearch, Item } from './useHistorySearch'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [countryCode, setCountryCode] = useState('US')
+  const [code, setcode] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const { items, addItems, clear } = useHistorySearch()
+
+  const onSubmit = (values: ValuesForm) => {
+    setCountryCode(values.country)
+    setcode(values.code)
+    setSubmitting(true)
+    addItems({ countryCode: values.country, code: values.code })
+  }
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div>
+      <SearchZipcode onSubmit={onSubmit} data-testid='search'/>
+      <h3>Last search</h3>
+      {items &&
+        items.map((item: Item) => (
+          <div data-testid='history'>
+            {item.code} - {item.countryCode}
+          </div>
+        ))}
+      <button onClick={clear}>clear history</button>
+      {submitting && <ShowZipcode countryCode={countryCode} code={code} data-testid='show'/>}
     </div>
   )
 }
