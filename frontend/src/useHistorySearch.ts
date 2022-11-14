@@ -25,6 +25,9 @@ export const useHistorySearch = () => {
     }
   }
 
-  const clear = () => setItems([])
+  const clear = () => {
+    localStorage.removeItem('items')
+    setItems([])
+  }
   return { items, addItems, clear }
 }

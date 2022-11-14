@@ -1,9 +1,15 @@
 import { useState } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { FormikHelpers } from 'formik'
-import { SearchZipcode, Values as ValuesForm } from './SearchZipcode'
-import { ShowZipcode } from './ShowZipcode'
+import { SearchZipcode, Values as ValuesForm } from './components/SearchZipcode'
+import { ShowZipcode } from './components/ShowZipcode'
 import { useHistorySearch, Item } from './useHistorySearch'
+
+import Grid from '@mui/material/Grid'
+import CssBaseline from '@mui/material/CssBaseline'
+import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
 
 const App = () => {
   const [countryCode, setCountryCode] = useState('US')
@@ -19,18 +25,36 @@ const App = () => {
   }
 
   return (
-    <div>
-      <SearchZipcode onSubmit={onSubmit} data-testid='search'/>
-      <h3>Last search</h3>
-      {items &&
-        items.map((item: Item) => (
-          <div data-testid='history'>
-            {item.code} - {item.countryCode}
-          </div>
-        ))}
-      <button onClick={clear}>clear history</button>
-      {submitting && <ShowZipcode countryCode={countryCode} code={code} data-testid='show'/>}
-    </div>
+    <Box sx={{ flexGrow: 1 }}>
+      <CssBaseline />
+      <Container>
+        <Grid container spacing={2}>
+          <Grid xs={12} md={4}>
+            <SearchZipcode
+              onSubmit={onSubmit}
+              onClear={clear}
+              data-testid="search"
+            />
+          </Grid>
+          <Grid xs={12} md={8} spacing={2} container>
+            <Grid xs={12}>
+              <Typography paragraph variant="h5">
+                <h3>Last search</h3>
+              </Typography>
+            </Grid>
+            {items &&
+              items.map((item: Item) => (
+                <Grid item={true}>
+                  <ShowZipcode
+                    countryCode={item.countryCode}
+                    code={item.code}
+                  />
+                </Grid>
+              ))}
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   )
 }
 

@@ -7,7 +7,8 @@ import { SearchZipcode } from './SearchZipcode'
 
 test('rendering and submitting a Formik form', async () => {
   const handleSubmit = vi.fn()
-  render(<SearchZipcode onSubmit={handleSubmit} />)
+  const onClear = vi.fn()
+  render(<SearchZipcode onSubmit={handleSubmit} onClear={onClear} />)
   const user = userEvent.setup()
 
   await user.selectOptions(screen.getByLabelText(/Country/i), ['MX'])
