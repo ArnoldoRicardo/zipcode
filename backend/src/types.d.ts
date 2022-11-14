@@ -1,5 +1,5 @@
 interface Zipcode {
-  code: number
+  code: string
   country: string
   countryCode: string
   places: [Place]
@@ -14,7 +14,15 @@ interface Place {
 }
 
 interface ZipcodeAPItype {
-  findZipcode: (countryCode: string, code: number) => Zipcode
+  findZipcode: (countryCode: string, code: string) => Zipcode
+}
+
+interface RawPlace {
+    'place name': string
+    longitude: number
+    latitude: number
+    state: string
+    'state abbreviation': string
 }
 
 interface Context {

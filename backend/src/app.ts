@@ -3,7 +3,7 @@ import ZipcodeAPI from './zipcodeApi'
 
 export const typeDefs = gql`
   type Zipcode {
-    code: Int!
+    code: String!
     country: String!
     countryCode: String!
     places: [Place]
@@ -38,7 +38,7 @@ export const resolvers = {
   }
 }
 
-const server = new ApolloServer({
+export const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {

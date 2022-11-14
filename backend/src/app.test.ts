@@ -1,4 +1,4 @@
-import { typeDefs, resolvers } from './app'
+import { typeDefs, resolvers, server } from './app'
 import { gql, ApolloServer } from 'apollo-server'
 
 const GET_US = gql`
@@ -18,16 +18,18 @@ const GET_US = gql`
   }
 `
 
-describe('test graphql', () => {
+describe('test graphql with mocks', () => {
   const MOCK_API = {
     findZipcode: async (
       countryCode: string,
-      code: number
+      code: string
     ): Promise<Zipcode> => {
+        console.log(countryCode, code)
+        if (countryCode !== 'us' || code !== '90210') throw Error
       return new Promise(function (resolve, reject) {
         setTimeout(function () {
           resolve({
-            code: 90210,
+            code: '90210',
             country: 'United States',
             countryCode: 'US',
             places: [
@@ -53,15 +55,56 @@ describe('test graphql', () => {
     }
   })
 
-  it('returns hello with the provided name', async () => {
+  it('test existing country', async () => {
     const result = await testServer.executeOperation({
       query: GET_US,
       variables: { code: '90210', countryCode: 'us' }
     })
 
     expect(result.errors).toBeUndefined()
-    console.log(result.data?.getZipcode?.country)
     expect(result.data?.getZipcode?.country).toBe('United States')
     expect(result.data?.getZipcode?.countryCode).toBe('US')
+  })
+
+it('test dont existing country', async () => {
+    const result = await testServer.executeOperation({
+      query: GET_US,
+      variables: { code: '90234', countryCode: 'zz' }
+    })
+
+    expect(result.errors?.length).toBe(1)
+    if (result.errors) {
+        if (result.errors.length > 1){
+            expect(result.errors[0].message).toBe('Country not avalible consult https://zippopotam.us/#where')
+        }
+    }
+  })
+})
+
+
+describe('test graphql server end to end', () => {
+  it('test existing country', async () => {
+    const result = await server.executeOperation({
+      query: GET_US,
+      variables: { code: '90210', countryCode: 'us' }
+    })
+
+    expect(result.errors).toBeUndefined()
+    expect(result.data?.getZipcode?.country).toBe('United States')
+    expect(result.data?.getZipcode?.countryCode).toBe('US')
+  })
+
+it('test dont existing country', async () => {
+    const result = await server.executeOperation({
+      query: GET_US,
+      variables: { code: '90234', countryCode: 'zz' }
+    })
+
+    expect(result.errors?.length).toBe(1)
+    if (result.errors) {
+        if (result.errors.length > 1){
+            expect(result.errors[0].message).toBe('Country not avalible consult https://zippopotam.us/#where')
+        }
+    }
   })
 })
